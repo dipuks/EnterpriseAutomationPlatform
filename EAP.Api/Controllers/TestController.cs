@@ -47,18 +47,18 @@ namespace EAP.Api.Controllers
         {
             var devices = new List<Device>
             {
-                new Device { Id=1, DeviceName="Sensor-A", DeviceType="Sensor", IsActive=true },
-                new Device { Id=2, DeviceName="Actuator-B", DeviceType="Actuator", IsActive=false },
-                new Device { Id=3, DeviceName="Sensor-C", DeviceType="Sensor", IsActive=true },
+                new Device { Id=1, Name="Sensor-A", Status="Online", LastSeen=DateTime.UtcNow },
+                new Device { Id=2, Name="Actuator-B", Status="Offline", LastSeen=DateTime.UtcNow },
+                new Device { Id=3, Name="Sensor-C", Status="Online", LastSeen=DateTime.UtcNow },
             };
 
-            var activeOnly = devices.Where(d => d.IsActive).ToList();
-            var namesOnly = devices.Select(d => d.DeviceName).ToList();
-            var sorted = devices.OrderBy(d => d.DeviceName).ToList();
-            var anyInactive = devices.Any(d => !d.IsActive);
+            var activeOnly = devices.Where(d => d.Status == "Online").ToList();
+            var namesOnly = devices.Select(d => d.Name).ToList();
+            var sorted = devices.OrderBy(d => d.Name).ToList();
+            var anyInactive = devices.Any(d => d.Status != "Online");
 
             // For GroupBy we need to shape it for JSON
-            var grouped = devices.GroupBy(d => d.DeviceType)
+            var grouped = devices.GroupBy(d => d.Status)
                                  .Select(g => new { Type = g.Key, Count = g.Count(), Devices = g.ToList() })
                                  .ToList();
 

@@ -1,4 +1,6 @@
 
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,6 +10,9 @@ builder.Services.AddSingleton<EAP.Core.Services.ISimulationEngine, EAP.Core.Serv
 builder.Services.AddTransient<EAP.Core.Services.ITransientService, EAP.Core.Services.TransientService>();
 builder.Services.AddScoped<EAP.Core.Services.IScopedService, EAP.Core.Services.ScopedService>();
 builder.Services.AddSingleton<EAP.Core.Services.ISingletonService, EAP.Core.Services.SingletonService>();
+builder.Services.AddDbContext<EAP.Core.Data.AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("EAP")));
+builder.Services.AddScoped<EAP.Core.Data.DeviceRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
