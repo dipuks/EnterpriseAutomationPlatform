@@ -1,0 +1,6 @@
+@EAP.Api_HostAddress = http://localhost:5269
+
+GET {{EAP.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

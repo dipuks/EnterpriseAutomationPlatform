@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="EAP.Api/EAP.Api.csproj" />
+  <Project Path="EAP.Core/EAP.Core.csproj" />
+</Solution>
