@@ -1,27 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EAP.Core.DTOs;
 
 namespace EAP.Core.Data
 {
     public class DeviceRepository
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _db;
+        public DeviceRepository(AppDbContext db) => _db = db;
 
-        public DeviceRepository(AppDbContext context)
+        private DeviceDto ToDto(Device d) => new DeviceDto
         {
-            _context = context;
-        }
+            Id = d.Id,
+            Name = d.Name,
+            Status = d.Status,
+            LastSeen = d.LastSeen
+        };
 
-        public List<Device> GetAll => _context.Devices.OrderBy(d => d.Name).ToList();
+        public List<DeviceDto> GetAll() =>
+            _db.Devices.OrderBy(d => d.Name).Select(d => ToDto(d)).ToList();
 
-        public List<Device> GetOnline => _context.Devices.Where(d => d.Status == "Online").ToList();
+        public List<DeviceDto> GetOnline() =>
+            _db.Devices.Where(d => d.Status == "Online").Select(d => ToDto(d)).ToList();
 
-        public Device Add(Device device)
+        public DeviceDto Add(CreateDeviceDto dto)
         {
-            _context.Devices.Add(device);
-            _context.SaveChanges();
-            return device;
+            var entity = new Device
+            {
+                Name = dto.Name,
+                Status = dto.Status,
+                LastSeen = DateTime.UtcNow
+            };
+            _db.Devices.Add(entity);
+            _db.SaveChanges();
+            return ToDto(entity);
         }
     }
 }

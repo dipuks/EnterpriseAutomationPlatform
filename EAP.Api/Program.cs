@@ -14,6 +14,9 @@ builder.Services.AddDbContext<EAP.Core.Data.AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("EAP")));
 builder.Services.AddScoped<EAP.Core.Data.DeviceRepository>();
 
+
+
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

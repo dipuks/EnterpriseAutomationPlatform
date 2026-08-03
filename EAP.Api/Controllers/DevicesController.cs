@@ -1,4 +1,5 @@
 ﻿using EAP.Core.Data;
+using EAP.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EAP.Api.Controllers
@@ -18,10 +19,11 @@ namespace EAP.Api.Controllers
         public IActionResult GetOnline() => Ok(_deviceRepository.GetOnline);
 
         [HttpPost]
-        public IActionResult Post(EAP.Core.Device device)
+        public IActionResult Post(CreateDeviceDto dto)
         {
-            device.LastSeen = DateTime.UtcNow;
-            return Ok(_deviceRepository.Add(device));
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            return Ok(_deviceRepository.Add(dto));
         }
 
     }
