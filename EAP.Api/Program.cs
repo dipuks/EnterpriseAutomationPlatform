@@ -1,4 +1,5 @@
 
+using EAP.Api.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddDbContext<EAP.Core.Data.AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("EAP")));
 builder.Services.AddScoped<EAP.Core.Data.DeviceRepository>();
 
+builder.Services.AddScoped<EAP.Core.Data.DeviceRepository>();
+builder.Services.AddScoped<EAP.Core.Services.IDeviceService, EAP.Core.Services.DeviceService>();
 
 
 
@@ -24,6 +27,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapControllers();

@@ -1,6 +1,6 @@
-﻿using EAP.Core.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using EAP.Core.DTOs;
-using Microsoft.AspNetCore.Mvc;
+using EAP.Core.Services;
 
 namespace EAP.Api.Controllers
 {
@@ -8,23 +8,42 @@ namespace EAP.Api.Controllers
     [Route("api/[controller]")]
     public class DevicesController : ControllerBase
     {
-        private readonly DeviceRepository _deviceRepository;
-
-        public DevicesController(DeviceRepository deviceRepository) => _deviceRepository = deviceRepository;
+        private readonly IDeviceService _service;
+        public DevicesController(IDeviceService service) => _service = service;
 
         [HttpGet]
-        public IActionResult Get() => Ok(_deviceRepository.GetAll);
+        public IActionResult Get() => Ok(_service.GetAll());
 
         [HttpGet("online")]
-        public IActionResult GetOnline() => Ok(_deviceRepository.GetOnline);
+        public IActionResult GetOnline() => Ok(_service.GetOnline());
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var device = _service.GetById(id);
+            return device == null ? NotFound($"Device {id} not found") : Ok(device);
+        }
 
         [HttpPost]
         public IActionResult Post(CreateDeviceDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            return Ok(_deviceRepository.Add(dto));
+            var created = _service.Add(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, CreateDeviceDto dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var updated = _service.Update(id, dto);
+            return updated == null ? NotFound() : Ok(updated);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            return _service.Delete(id) ? NoContent() : NotFound();
+        }
     }
 }

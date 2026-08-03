@@ -21,6 +21,12 @@ namespace EAP.Core.Data
         public List<DeviceDto> GetOnline() =>
             _db.Devices.Where(d => d.Status == "Online").Select(d => ToDto(d)).ToList();
 
+        public DeviceDto? GetById(int id)
+        {
+            var d = _db.Devices.Find(id);
+            return d == null ? null : ToDto(d);
+        }
+
         public DeviceDto Add(CreateDeviceDto dto)
         {
             var entity = new Device
@@ -32,6 +38,26 @@ namespace EAP.Core.Data
             _db.Devices.Add(entity);
             _db.SaveChanges();
             return ToDto(entity);
+        }
+
+        public DeviceDto? Update(int id, CreateDeviceDto dto)
+        {
+            var entity = _db.Devices.Find(id);
+            if (entity == null) return null;
+            entity.Name = dto.Name;
+            entity.Status = dto.Status;
+            entity.LastSeen = DateTime.UtcNow;
+            _db.SaveChanges();
+            return ToDto(entity);
+        }
+
+        public bool Delete(int id)
+        {
+            var entity = _db.Devices.Find(id);
+            if (entity == null) return false;
+            _db.Devices.Remove(entity);
+            _db.SaveChanges();
+            return true;
         }
     }
 }
