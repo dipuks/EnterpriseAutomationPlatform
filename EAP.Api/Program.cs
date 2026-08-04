@@ -17,7 +17,10 @@ builder.Services.AddScoped<EAP.Core.Data.DeviceRepository>();
 
 builder.Services.AddScoped<EAP.Core.Data.DeviceRepository>();
 builder.Services.AddScoped<EAP.Core.Services.IDeviceService, EAP.Core.Services.DeviceService>();
-
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 
 
 builder.Services.AddControllers();
@@ -27,6 +30,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 app.UseMiddleware<ExceptionMiddleware>();
 

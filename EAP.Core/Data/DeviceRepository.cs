@@ -7,7 +7,7 @@ namespace EAP.Core.Data
         private readonly AppDbContext _db;
         public DeviceRepository(AppDbContext db) => _db = db;
 
-        private DeviceDto ToDto(Device d) => new DeviceDto
+        private static DeviceDto ToDto(Device d) => new DeviceDto
         {
             Id = d.Id,
             Name = d.Name,
@@ -16,10 +16,10 @@ namespace EAP.Core.Data
         };
 
         public List<DeviceDto> GetAll() =>
-            _db.Devices.OrderBy(d => d.Name).Select(d => ToDto(d)).ToList();
+            _db.Devices.OrderBy(d => d.Name).AsEnumerable().Select(d => ToDto(d)).ToList();
 
         public List<DeviceDto> GetOnline() =>
-            _db.Devices.Where(d => d.Status == "Online").Select(d => ToDto(d)).ToList();
+            _db.Devices.Where(d => d.Status == "Online").AsEnumerable().Select(d => ToDto(d)).ToList();
 
         public DeviceDto? GetById(int id)
         {
