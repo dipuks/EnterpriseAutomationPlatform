@@ -1,1 +1,53 @@
-<p>device-list works!</p>
+<div class="p-6 max-w-6xl mx-auto">
+  <h1 class="text-2xl font-bold mb-4">Enterprise Automation - Devices (Day 7)</h1>
+
+  <!-- Add + Search -->
+  <div class="flex gap-3 mb-4">
+    <input [(ngModel)]="newName" placeholder="Name: Pump-02" class="border p-2 rounded w-64">
+    <select [(ngModel)]="newStatus" class="border p-2 rounded">
+      <option>Online</option><option>Offline</option><option>Maintenance</option>
+    </select>
+    <button (click)="add()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add</button>
+    <input [(ngModel)]="search" (ngModelChange)="onSearch($event)" placeholder="Search..." class="border p-2 rounded ml-auto w-64">
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white shadow rounded overflow-hidden">
+    <table class="w-full text-left">
+      <thead class="bg-gray-100">
+        <tr><th class="p-3">ID</th><th>Name</th><th>Status</th><th>LastSeen</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of devices" class="border-t hover:bg-gray-50">
+          <td class="p-3">{{d.id}}</td>
+          <td class="font-medium">{{d.name}}</td>
+          <td><span class="px-2 py-1 rounded text-xs" [ngClass]="d.status==='Online'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'">{{d.status}}</span></td>
+          <td>{{d.lastSeen | date:'short'}}</td>
+          <td class="flex gap-2 p-3">
+            <button (click)="startEdit(d)" class="text-blue-600">Edit</button>
+            <button (click)="delete(d.id)" class="text-red-600">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="devices.length===0" class="p-8 text-center text-gray-500">No devices found</div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div *ngIf="editing" class="fixed inset-0 bg-black/50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded shadow w-96">
+    <h3 class="font-bold mb-3">Edit Device</h3>
+    <input [(ngModel)]="editing.name" class="border p-2 w-full rounded mb-2">
+    <select [(ngModel)]="editing.status" class="border p-2 w-full rounded mb-4">
+      <option>Online</option><option>Offline</option><option>Maintenance</option>
+    </select>
+    <div class="flex justify-end gap-2">
+      <button (click)="editing=null" class="px-4 py-2">Cancel</button>
+      <button (click)="saveEdit()" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div *ngIf="toast" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow">{{toast}}</div>

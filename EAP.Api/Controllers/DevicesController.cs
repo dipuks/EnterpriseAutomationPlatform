@@ -12,7 +12,17 @@ namespace EAP.Api.Controllers
         public DevicesController(IDeviceService service) => _service = service;
 
         [HttpGet]
-        public IActionResult Get() => Ok(_service.GetAll());
+        [HttpGet]
+        public IActionResult Get([FromQuery] string? search)
+        {
+            var devices = _service.GetAll();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                devices = devices.Where(d => d.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            return Ok(devices);
+        }
+
 
         [HttpGet("online")]
         public IActionResult GetOnline() => Ok(_service.GetOnline());
